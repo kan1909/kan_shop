@@ -1,0 +1,11 @@
+{% extends 'index.html' %}
+{% block content %}
+    <div class="w-50 container">
+        <form method="post">
+            {% csrf_token %}
+            <p>Пожалуйста подтвердите ваш e-mail адрес</p>
+            <input type="hidden" name="email_data" value="{{ email }}">
+            <button class="btn btn-primary" type="submit">Подтвердить</button>
+        </form>
+    </div>
+{% endblock %}

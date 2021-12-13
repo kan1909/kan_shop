@@ -1,0 +1,43 @@
+version: '3.8'
+
+
+services:
+  web:
+    build: .
+    command: gunicorn shop.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - media_volume:/code/media
+      - static_volume:/code/static
+    expose:
+      - 8000
+  redis:
+    restart: always
+    container_name: shop_redis
+    image: redis:alpine
+
+  celery:
+    container_name: shop_celery
+    command: celery -A shop worker -l info
+    build: ./
+    volumes:
+      - .:/code
+    depends_on:
+      - redis
+      - web
+
+  nginx:
+    build: ./nginx
+    volumes:
+      - media_volume:/code/media
+      - static_volume:/code/static
+    ports:
+      - 80:80
+    depends_on:
+      - web
+
+
+volumes:
+  postgres_data:
+  media_volume:
+  static_volume:
+
